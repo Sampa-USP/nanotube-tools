@@ -112,9 +112,10 @@ def rotationmatrix(v1, v2):
 if __name__ == '__main__':
   parser = argparse.ArgumentParser(description="Receives a xyz file containing a sheet to roll into a nanotube")
   parser.add_argument("xyzfile", type=extant_file, help="xyz containing the sheet")
-  parser.add_argument("--atoms-to-align", nargs="+", type=int, help="atom indexes to align to the x axis")
+  parser.add_argument("--atoms-to-align", nargs="+", type=int, help="atom indexes to align to the x axis (roll axis)")
   parser.add_argument("--x-length", type=float, help="length of the x axis, which will be rolled")
-  parser.add_argument("--buffer", type=float, help="add a buffer to the automacitally determined length of the x axis, which will be rolled")
+  parser.add_argument("--buffer", type=float, help="add a buffer to the automatically determined length of the x axis, which will be rolled")
+  parser.add_argument("--align-to-z", action="store_true", help="align the final nanotube center axis to z")
 
   args = parser.parse_args()
 
@@ -134,5 +135,9 @@ if __name__ == '__main__':
     writexyz(species, atoms, "rotated.xyz")
 
   rolledatoms = rollsheet(atoms, args.x_length, args.buffer)
+
+  if args.align_to_z:
+    R = rotationmatrix([0.,1.,0.],[0.,0.,1.])
+    rolledatoms = np.dot(rolledatoms,R)
 
   writexyz(species, rolledatoms, "nanotube.xyz")
