@@ -1,0 +1,115 @@
+# Calculate accessible volume of a NT using MC and argon probe
+# Based on the ideas of:
+# http://dx.doi.org/10.1016/j.jcis.2007.08.020
+# http://dx.doi.org/10.1016/j.jcis.2010.05.001
+# Argon potential from:
+# https://doi.org/10.1063/1.479848
+
+# ------- ATTENTION -------
+#
+# Add an EXTRA atom type to your topology, with parameters (real units):
+# Masses
+#        X       39.948  # Ar
+# Pair Coeffs
+#        X       0.250   3.345  # Ar
+#
+# Before running, generate Nsteps random numbers with:
+# rm -f rngs.txt; for s in $(seq 1 Nsteps); do echo $RANDOM >> rngs.txt ; done
+
+# ----------- Variables ------------
+
+variable Nsteps equal 100000   # number of MC steps for integration
+variable seed file rngs.txt    # file containing the random seeds to generate the positions
+
+variable NTradius equal 5.0 # NT radius (cylinder) in angstrom
+
+variable Nin  equal 0  # number of accepted insertions
+variable Nout equal 0  # number of rejected insertions
+
+# ----------- Settings ------------
+
+# General settings
+dimension    3
+boundary     p p p
+units        real
+
+# Interatomic potential (adjust if needed)
+atom_style   full
+pair_style   lj/cut 20.0
+pair_modify  tail yes mix arithmetic
+neigh_modify delay 0 every 1
+
+# Initial structure
+read_data    99CNT.lmp # ATTENTION: change to your topology name and remember including the extra atom type!
+
+# Define region
+region       cyl cylinder z 0.0 0.0 ${NTradius} EDGE EDGE # ATTENTION: check if your NT axis is z or change it
+
+# Define NT group
+group        NT molecule 1
+
+# ---------- Compute accessible volume ------------
+
+thermo ${Nsteps}
+variable clength equal lz # ATTENTION: change z to your NT axis
+
+# Main loop
+variable a loop ${Nsteps}
+label loop
+
+# DEBUG ONLY
+#dump    1 all custom 1 debug_$a.lammpstrj id element xu yu z
+#dump_modify 1 sort id element C Ar
+
+# Insert Ar atom
+create_atoms 2 random 1 ${seed} cyl # ATTENTION: change the "2" to your new atom type!
+
+# Create group for Ar atom
+group        Ar type 2 # ATTENTION: change this value to the one correspondent to the Ar type
+
+# Compute to get the interaction energy
+compute intEn Ar group/group NT
+thermo_style custom step lz c_intEn # ATTENTION: change z to your NT axis
+
+# Compute potential energy
+run 0
+
+# Check energy and increase counter
+variable PotEng equal c_intEn
+
+if "${PotEng} <= 0.0" then &
+  "variable Nin equal $(v_Nin+1)" &
+else &
+  "variable Nout equal $(v_Nout+1)"
+
+# Delete Ar atom
+delete_atoms group Ar
+
+# Change seed to insert in a different position next time
+next seed
+
+#undump 1
+uncompute intEn
+
+next a
+jump volume.in loop
+
+# Calculate the volumes
+variable cylvol equal "PI * v_NTradius*v_NTradius * v_clength"
+variable avol equal "v_cylvol * (v_Nin/v_Nout)"
+
+# Print output
+print ""
+print "------ Accessible volume info ------"
+print ""
+print "Number points inside = ${Nin}"
+print "Number points outside = ${Nout}"
+print "Cylinder radius = ${NTradius}"
+print "Cylinder length = ${clength}"
+print ""
+print "Cylinder volume (A^3) = ${cylvol}"
+print ""
+print "Acessible volume (A^3) = ${avol}"
+print ""
+print "------------------------------------"
+print ""
