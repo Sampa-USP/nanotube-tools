@@ -1,17 +1,14 @@
-# Calculate accessible volume of a NT using MC and argon probe
+# Calculate accessible volume of a NT using MC and neon probe
 # Based on the ideas of:
-# http://dx.doi.org/10.1016/j.jcis.2007.08.020
 # http://dx.doi.org/10.1016/j.jcis.2010.05.001
-# Argon potential from:
-# https://doi.org/10.1063/1.479848
 
 # ------- ATTENTION -------
 #
 # Add an EXTRA atom type to your topology, with parameters (real units):
 # Masses
-#        X       39.948  # Ar
+#        X  20.180  # Ne
 # Pair Coeffs
-#        X       0.250   3.345  # Ar
+#        X 0.0694  2.78  # Ne
 #
 # Before running, generate Nsteps random numbers with:
 # rm -f rngs.txt; for s in $(seq 1 Nsteps); do echo $RANDOM >> rngs.txt ; done
@@ -56,8 +53,8 @@ thermo ${Nsteps}
 variable clength equal lz # ATTENTION: change z to your NT axis
 
 # DEBUG
-#dump    1 all custom 1 debug.lammpstrj id element xu yu z
-#dump_modify 1 sort id element C Ar
+#dump    1 all custom 1 debug.lammpstrj id element x y z
+#dump_modify 1 sort id element C Ne
 
 # Main loop
 variable a loop ${Nsteps}
@@ -65,14 +62,14 @@ label loop
 
 reset_timestep $a
 
-# Insert Ar atom
+# Insert Ne atom
 create_atoms XXX random 1 ${seed} cyl # ATTENTION: change the "XXX" to your new atom type!
 
-# Create group for Ar atom
-group        Ar type XXX # ATTENTION: change this value to the one correspondent to the Ar type
+# Create group for Ne atom
+group        Ne type XXX # ATTENTION: change this value to the one correspondent to the Ar type
 
 # Compute to get the interaction energy
-compute intEn Ar group/group NT
+compute intEn Ne group/group NT
 thermo_style custom step lz c_intEn # ATTENTION: change z to your NT axis
 
 # Compute potential energy
@@ -86,8 +83,8 @@ if "${PotEng} <= 0.0" then &
 else &
   "variable Nout equal $(v_Nout+1)"
 
-# Delete Ar atom
-delete_atoms group Ar
+# Delete Ne atom
+delete_atoms group Ne
 
 # Change seed to insert in a different position next time
 next seed

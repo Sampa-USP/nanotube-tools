@@ -11,12 +11,12 @@ LAMMPS topology created from 99CNT.pdb using pdb2lmp.py - By Henrique Musseli Ce
 Masses
 
 	1	12.011	# C
-	2	39.948	# Ar
+	2	20.180	# Ne
 
 Pair Coeffs
 
 	1	0.086	3.4	# C AMBER parameters
-	2	0.250	3.34	# Ar
+	2	0.0694	2.78	# Ne
 
 Atoms # full
 
