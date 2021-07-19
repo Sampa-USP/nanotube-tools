@@ -2,9 +2,9 @@
 
 The scripts in this folder can be used to estimate the acessible volume inside a nanotube using LAMMPS.
 
-The idea is to insert a probe (Ar atom) hundreds or millions of times to perform a Monte Carlo integration, similar to what is performed in the common exercise of [estimating the value of pi](https://www.geeksforgeeks.org/estimating-value-pi-using-monte-carlo/).
+The idea is to insert a probe (Ne atom) hundreds or millions of times to perform a Monte Carlo integration, similar to what is performed in the common exercise of [estimating the value of pi](https://www.geeksforgeeks.org/estimating-value-pi-using-monte-carlo/).
 The accessible volume is determined by the Lennard-Jones interaction energy: if the energy is lesser than zero, the probe is in, if the energy is positive the probe is out of the accessible volume.
-This idea was previously explored in [this](http://dx.doi.org/10.1016/j.jcis.2007.08.020) and [this](http://dx.doi.org/10.1016/j.jcis.2010.05.001) references, and the argon potential is from [this](https://doi.org/10.1063/1.479848) reference.
+This idea was previously explored in [this](http://dx.doi.org/10.1016/j.jcis.2010.05.001) reference.
 
 First, you need to generate a sequence of random rumbers to be used as seed for each insertion in LAMMPS.
 To generate the seeds, run the python script as below, replacing `NSTEPS` with the number of steps you wish to use in your MC integration:
@@ -16,12 +16,12 @@ Note that the seed should be >= 1, so beware if you generate the seeds using ano
 
 With the seeds in hand, open your LAMMPS topology file containing the nanotube and edit a few things:
 1. Make sure your NT does not wrap around PBCs. You'll have to edit the `volume.in` with the origin (axis) of the NT, but if it is 0.0 0.0 0.0 and your box start at 0.0, you'll get a wrong volume.
-2. Add an extra atom type (replacing `X` with the correct number), and attribute the following parameters to it (Ar atom):
+2. Add an extra atom type (replacing `X` with the correct number), and attribute the following parameters to it (Ne atom):
 ```
 Masses
-       X       39.948  # Ar
+  X  20.180  # Ne
 Pair Coeffs
-       X       0.250   3.345  # Ar
+  X 0.0694  2.78  # Ne
 ```
 
 Then, you should edit the `volume.in` file with the proper parameters.
