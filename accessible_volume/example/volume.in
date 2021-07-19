@@ -53,13 +53,15 @@ group        NT molecule 1
 thermo ${Nsteps}
 variable clength equal lz # ATTENTION: change z to your NT axis
 
+# DEBUG
+#dump    1 all custom 1 debug.lammpstrj id element x y z
+#dump_modify 1 sort id element C Ar
+
 # Main loop
 variable a loop ${Nsteps}
 label loop
 
-# DEBUG ONLY
-#dump    1 all custom 1 debug_$a.lammpstrj id element xu yu z
-#dump_modify 1 sort id element C Ar
+reset_timestep $a
 
 # Insert Ar atom
 create_atoms 2 random 1 ${seed} cyl # ATTENTION: change the "2" to your new atom type!
@@ -88,11 +90,13 @@ delete_atoms group Ar
 # Change seed to insert in a different position next time
 next seed
 
-#undump 1
 uncompute intEn
 
 next a
 jump volume.in loop
+
+# DEBUG
+#undump 1
 
 # Calculate the volumes
 variable cylvol equal "PI * v_NTradius*v_NTradius * v_clength"
