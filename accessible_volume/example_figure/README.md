@@ -2,7 +2,7 @@
 
 In this example I create a figure like the one below:
 
-![Colored points](figure.png "Colored points")
+<img src="figure.png" width="400">
 
 Beware that the more points you put in your figure, the slowest the trajectory script runs! In this example I'm using 1000, that in this case is enough.
 
