@@ -28,3 +28,10 @@ The process is similar to the above, but in step 5, run the `python` script with
 ```bash
 python ../concat_in_out_traj.py debug.lammpstrj inten.txt --only-in > colored2.lammpstrj
 ```
+
+Remember that if your NT does not have a cylindrical symmetry, maybe it would be better to use a parallelepiped over a cylinder.
+By doing this you can better select the region your points fall in.
+This is illustrated in `volume_box.in` in the previous directory and in the figure below.
+
+<img src="figure3.png" width="400">
+

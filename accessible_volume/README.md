@@ -24,7 +24,7 @@ Pair Coeffs
   X 0.0694  2.78  # Ne
 ```
 
-Then, you should edit the `volume.in` file with the proper parameters.
+Then, you should edit the `volume.in` (or `volume_box.in` for non-cylindrical NTs) file with the proper parameters.
 The lines you need to change are the ones that are with an "ATTENTION" comment:
 1. You'll need an estimative of the NT radius (use an upper bound), in which the probe atoms will be inserted.
 2. Set the number of MC steps (should be the same `NSTEPS` used in the python script above or lower)
