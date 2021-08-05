@@ -97,12 +97,13 @@ jump volume.in loop
 
 # Calculate the volumes
 variable cylvol equal "PI * v_NTradius*v_NTradius * v_clength"
-variable avol equal "v_cylvol * (v_Nin/v_Nout)"
+variable avol equal "v_cylvol * (v_Nin/v_Nsteps)"
 
 # Print output
 print ""
 print "------ Accessible volume info ------"
 print ""
+print "Number points generated = ${Nsteps}"
 print "Number points inside = ${Nin}"
 print "Number points outside = ${Nout}"
 print "Cylinder radius = ${NTradius}"

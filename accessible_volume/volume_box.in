@@ -100,12 +100,13 @@ jump volume_box.in loop
 
 # Calculate the volumes
 variable boxvol equal "4 * v_bx * v_by * v_clength"
-variable avol equal "v_boxvol * (v_Nin/v_Nout)"
+variable avol equal "v_boxvol * (v_Nin/v_Nsteps)"
 
 # Print output
 print ""
 print "------ Accessible volume info ------"
 print ""
+print "Number points generated = ${Nsteps}"
 print "Number points inside = ${Nin}"
 print "Number points outside = ${Nout}"
 print "Box dimensions: x = $(2*v_bx), y = $(2*v_by), z = ${clength}"
